@@ -17,16 +17,28 @@ class User < ApplicationRecord
 
   validates :introduction, length: {maximum: 50}
 
-  def follow(user_id)
-    relationships.create(followed_id: user_id)
+def self.search_for(content, method)
+  if method == 'perfect'
+    User.where(name: content)
+  elsif method == 'forward'
+    User.where('name LIKE ?', content + '%')
+  elsif method == 'backward'
+    User.where('name LIKE ?', '%' + content)
+  else
+    User.where('name LIKE ?', '%' + content + '%')
   end
+end
 
-  def unfollow(user_id)
-    relationships.find_by(followed_id: user_id).destroy
-  end
+def follow(user_id)
+  relationships.create(followed_id: user_id)
+end
 
-  def following?(user)
-    followings.include?(user)
-  end
+def unfollow(user_id)
+  relationships.find_by(followed_id: user_id).destroy
+end
+
+def following?(user)
+  followings.include?(user)
+end
 
 end
